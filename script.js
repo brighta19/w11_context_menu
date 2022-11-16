@@ -13,6 +13,8 @@ function createMenuOption(option) {
 }
 
 function main() {
+    let context_menu_open = false;
+    let hovering_over_menu = false;
     let context_menu = document.querySelector("#context_menu");
 
     const menuOptions = [
@@ -27,16 +29,23 @@ function main() {
     context_menu.innerHTML = "";
     menuOptions.forEach(option => context_menu.innerHTML += createMenuOption(option));
 
+    context_menu.onmouseover = () => hovering_over_menu = true;
+    context_menu.onmouseout = () => hovering_over_menu = false;
+
     window.onmousedown = e => {
-        if ( e.path.find(a => a.id=="context_menu") === undefined )
-            context_menu.classList.add("hide");
+        if (!context_menu_open || hovering_over_menu)
+            return;
+
+        context_menu.classList.add("hide");
+        context_menu_open = false;
     };
 
     window.oncontextmenu = e => {
         e.preventDefault();
-        if ( e.path.find(a => a.id=="context_menu") !== undefined )
+        if (context_menu_open)
             return;
 
+        context_menu_open = true;
         context_menu.classList.remove("hide");
         context_menu.style.animation = "fadein 0.2s";
 
